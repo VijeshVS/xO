@@ -49,26 +49,36 @@ export default function Home() {
   function checkWinning(prevState: string[]) {
     if (checkEqual([0, 1, 2], prevState)) {
       winnerSet(prevState[0]);
+      return true;
     } else if (checkEqual([3, 4, 5], prevState)) {
       winnerSet(prevState[3]);
+      return true;
     } else if (checkEqual([6, 7, 8], prevState)) {
       winnerSet(prevState[6]);
+      return true;
     } else if (checkEqual([0, 4, 8], prevState)) {
       winnerSet(prevState[0]);
+      return true;
     } else if (checkEqual([2, 4, 6], prevState)) {
       winnerSet(prevState[2]);
+      return true;
     } else if (checkEqual([0, 3, 6], prevState)) {
       winnerSet(prevState[0]);
+      return true;
     } else if (checkEqual([1, 4, 7], prevState)) {
       winnerSet(prevState[1]);
+      return true;
     } else if (checkEqual([2, 5, 8], prevState)) {
       winnerSet(prevState[2]);
+      return true;
     }
+
+    return false;
   }
 
   return (
     <div className="flex justify-center items-center h-screen flex-col">
-      <h1 className="font-bold text-5xl text-green-400">Tic-tac-toe</h1>
+      <h1 className="font-bold text-5xl text-green-300">Tic-tac-toe</h1>
       <div className="grid grid-cols-3 mt-6 gap-4 w-[270px]">
         {grid.map((ele, index) => {
           return (
@@ -85,8 +95,9 @@ export default function Home() {
                 }
 
                 setGrid(prevState);
-                checkWinning(prevState);
-                if (checkTie(prevState)) {
+                const winCheck = checkWinning(prevState);
+
+                if (!winCheck && checkTie(prevState)) {
                   setTie(true);
 
                   setTimeout(() => {
@@ -96,7 +107,7 @@ export default function Home() {
                 }
                 setTurn(!turn);
               }}
-              className={`p-4 text-red-800 text-5xl border rounded shadow-md flex items-center justify-center h-20 w-20 bg-white hover:bg-gray-100 transition-colors duration-200 ${
+              className={`p-4 text-red-800 font-bold text-5xl border rounded shadow-md flex items-center justify-center h-20 w-20 bg-white hover:bg-gray-100 transition-colors duration-200 ${
                 win || tie ? "cursor-default" : "cursor-pointer"
               }`}
             >
@@ -106,11 +117,14 @@ export default function Home() {
         })}
       </div>
 
-        {selectingTeam? <div className="flex space-x-4 text-xl mt-6 font-bold">
+        {selectingTeam? <div className="flex flex-col items-center space-y-3 text-xl mt-6 font-bold">
+        <h1 className="text-2xl">Choose your team</h1>
+        <div className="flex space-x-4">
           <button onClick={()=>{
             selectTeam("0")
-          }} className="bg-white p-2 rounded-xl text-black">0 Team</button>
-          <button onClick={()=>selectTeam("X")} className="bg-white p-2 rounded-xl text-black">X Team</button>
+          }} className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black ">0</button>
+          <button onClick={()=>selectTeam("X")} className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black">X</button>
+          </div>
         </div>:<></>}
        
       {!selectingTeam?<h1 className="text-3xl font-bold mt-6 text-red-200">
@@ -118,7 +132,7 @@ export default function Home() {
       </h1>:<></>}
       
       {win ? (
-        <h1 className="text-3xl font-bold mt-6">{winner} is the Winner</h1>
+        <h1 className="text-3xl font-bold mt-2">{winner} is the Winner</h1>
       ) : (
         <></>
       )}
