@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useStyleRegistry } from "styled-jsx";
 
 export default function Home() {
   const [grid, setGrid] = useState(Array(9).fill(""));
@@ -7,6 +8,14 @@ export default function Home() {
   const [win, setWin] = useState(false);
   const [winner, setWinner] = useState("");
   const [tie, setTie] = useState(false);
+  const [selectingTeam,setSelectingTeam] = useState(true);
+  
+  function selectTeam(team: string){
+    if(team != "0"){
+      setTurn(false)
+    }
+    setSelectingTeam(false)
+  }
 
   function checkTie(preState: string[]) {
     for (let i = 0; i < preState.length; i++) {
@@ -66,7 +75,7 @@ export default function Home() {
           return (
             <div
               onClick={(e) => {
-                if (win || tie) return;
+                if (win || tie || selectingTeam) return;
 
                 const prevState = [...grid];
                 if (prevState[index] != "") return;
@@ -97,15 +106,25 @@ export default function Home() {
           );
         })}
       </div>
-      <h1 className="text-3xl font-bold mt-6 text-red-200">
+
+        {selectingTeam? <div className="flex space-x-4 text-xl mt-6 font-bold">
+          <button onClick={()=>{
+            selectTeam("0")
+          }} className="bg-white p-2 rounded-xl text-black">0 Team</button>
+          <button onClick={()=>selectTeam("X")} className="bg-white p-2 rounded-xl text-black">X Team</button>
+        </div>:<></>}
+       
+      {!selectingTeam?<h1 className="text-3xl font-bold mt-6 text-red-200">
         {turn ? "0's" : "X's"} turn
-      </h1>
+      </h1>:<></>}
+      
       {win ? (
-        <h1 className="text-3xl font-bold mt-6">Winner is {winner}</h1>
+        <h1 className="text-3xl font-bold mt-6">{winner} is the Winner</h1>
       ) : (
         <></>
       )}
       {tie ? <h1 className="text-3xl font-bold mt-6">Its a tie</h1> : <></>}
+      
     </div>
   );
 }
