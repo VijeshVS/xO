@@ -1,101 +1,111 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [grid, setGrid] = useState(Array(9).fill(""));
+  const [turn, setTurn] = useState(true);
+  const [win, setWin] = useState(false);
+  const [winner, setWinner] = useState("");
+  const [tie, setTie] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  function checkTie(preState: string[]) {
+    for (let i = 0; i < preState.length; i++) {
+      if (preState[i] == "") return false;
+    }
+
+    return true;
+  }
+
+  function winnerSet(state: string) {
+    setWinner(state);
+    setWin(true);
+
+    setTimeout(() => {
+      setWin(false);
+      setWinner("");
+      setGrid(Array(9).fill(""));
+    }, 4000);
+  }
+
+  function checkEqual(indices: number[], prevState: string[]) {
+    let ans = true;
+
+    for (let i = 1; i < indices.length; i++) {
+      if (prevState[indices[i]] == "") return false;
+      ans = ans && prevState[indices[i]] == prevState[indices[i - 1]];
+    }
+
+    return ans;
+  }
+
+  function checkWinning(prevState: string[]) {
+    if (checkEqual([0, 1, 2], prevState)) {
+      winnerSet(prevState[0]);
+    } else if (checkEqual([3, 4, 5], prevState)) {
+      winnerSet(prevState[3]);
+    } else if (checkEqual([6, 7, 8], prevState)) {
+      winnerSet(prevState[6]);
+    } else if (checkEqual([0, 4, 8], prevState)) {
+      winnerSet(prevState[0]);
+    } else if (checkEqual([2, 4, 6], prevState)) {
+      winnerSet(prevState[2]);
+    } else if (checkEqual([0, 3, 6], prevState)) {
+      winnerSet(prevState[0]);
+    } else if (checkEqual([1, 4, 7], prevState)) {
+      winnerSet(prevState[1]);
+    } else if (checkEqual([2, 5, 8], prevState)) {
+      winnerSet(prevState[2]);
+    }
+  }
+
+  return (
+    <div className="flex justify-center items-center h-screen flex-col">
+      <h1 className="font-bold text-5xl text-green-400">Tic-tac-toe</h1>
+      <div className="grid grid-cols-3 mt-6 gap-4 w-[270px]">
+        {grid.map((ele, index) => {
+          return (
+            <div
+              onClick={(e) => {
+                if (win || tie) return;
+
+                const prevState = [...grid];
+                if (prevState[index] != "") return;
+                if (turn) {
+                  prevState[index] = "0";
+                } else {
+                  prevState[index] = "X";
+                }
+
+                setGrid(prevState);
+                checkWinning(prevState);
+                if (checkTie(prevState)) {
+                  setTie(true);
+
+                  setTimeout(() => {
+                    setGrid(Array(9).fill(""));
+                    setTie(false);
+                  }, 4000);
+                }
+                setTurn(!turn);
+              }}
+              className={`p-4 text-red-800 text-5xl border rounded shadow-md flex items-center justify-center h-20 w-20 bg-white hover:bg-gray-100 transition-colors duration-200 ${
+                win || tie ? "cursor-default" : "cursor-pointer"
+              }`}
+            >
+              {ele}
+            </div>
+          );
+        })}
+      </div>
+      <h1 className="text-3xl font-bold mt-6 text-red-200">
+        {turn ? "0's" : "X's"} turn
+      </h1>
+      {win ? (
+        <h1 className="text-3xl font-bold mt-6">Winner is {winner}</h1>
+      ) : (
+        <></>
+      )}
+      {tie ? <h1 className="text-3xl font-bold mt-6">Its a tie</h1> : <></>}
     </div>
   );
 }
