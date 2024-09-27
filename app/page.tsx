@@ -73,7 +73,7 @@ export default function Home() {
         {grid.map((ele, index) => {
           return (
             <div key={index}
-              onClick={(e) => {
+              onClick={() => {
                 if (win || tie || selectingTeam) return;
 
                 const prevState = [...grid];
