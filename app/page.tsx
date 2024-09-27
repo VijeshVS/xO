@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useStyleRegistry } from "styled-jsx";
+import { useState } from "react";
 
 export default function Home() {
   const [grid, setGrid] = useState(Array(9).fill(""));
@@ -73,7 +72,7 @@ export default function Home() {
       <div className="grid grid-cols-3 mt-6 gap-4 w-[270px]">
         {grid.map((ele, index) => {
           return (
-            <div
+            <div key={index}
               onClick={(e) => {
                 if (win || tie || selectingTeam) return;
 
