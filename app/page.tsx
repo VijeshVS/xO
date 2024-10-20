@@ -6,6 +6,7 @@ export default function Home() {
   const [playGemini, setPlayGemini] = useState(false);
   const [geminiTeam, setGeminiTeam] = useState("");
 
+  
   const [selectingGemini, setSelectingGemini] = useState(true);
   const [grid, setGrid] = useState(Array(9).fill(""));
   // Turn true -> O else X
