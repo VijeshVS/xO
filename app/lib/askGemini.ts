@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
-const genAI = new GoogleGenerativeAI("AIzaSyC8QXDJO5N2XE63fpXLnmZezF9Wgdi02Nk");
+const genAI = new GoogleGenerativeAI("API_KEY");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const askGemini = async (grid:string,level:string,team:string) => {
