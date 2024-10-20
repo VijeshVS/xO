@@ -1,19 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { askGemini } from "./lib/askGemini";
 
 export default function Home() {
+  const [playGemini, setPlayGemini] = useState(false);
+  const [geminiTeam, setGeminiTeam] = useState("");
+
+  const [selectingGemini, setSelectingGemini] = useState(true);
   const [grid, setGrid] = useState(Array(9).fill(""));
+  // Turn true -> O else X
   const [turn, setTurn] = useState(true);
   const [win, setWin] = useState(false);
   const [winner, setWinner] = useState("");
   const [tie, setTie] = useState(false);
-  const [selectingTeam,setSelectingTeam] = useState(true);
+  const [selectingTeam, setSelectingTeam] = useState(true);
+
+  const [geminiThinking,setGeminiThinking] = useState(false);
+
   
-  function selectTeam(team: string){
-    if(team != "0"){
-      setTurn(false)
+
+  useEffect(()=>{
+    if(turn == true && geminiTeam == "0"){
+      geminiAct();
     }
-    setSelectingTeam(false)
+    else if(turn == false && geminiTeam == "X"){
+      geminiAct();
+    }
+  },[turn])
+
+  function selectTeam(team: string) {
+    if (team != "0") {
+      setTurn(false);
+    }
+    setSelectingTeam(false);
   }
 
   function checkTie(preState: string[]) {
@@ -25,7 +44,13 @@ export default function Home() {
   }
 
   function winnerSet(state: string) {
-    setWinner(state);
+    if(geminiTeam == state && playGemini == true){
+      setWinner("Gemini")
+    }
+    else {
+      setWinner(state);
+    }
+      
     setWin(true);
 
     setTimeout(() => {
@@ -76,13 +101,58 @@ export default function Home() {
     return false;
   }
 
+  function geminiAct(){
+    setGeminiThinking(true)
+    askGemini(JSON.stringify(grid),"Advanced",geminiTeam).then((res)=>{
+      if(res.status == 200){
+        const prevState = [...grid];
+        prevState[res.res] = geminiTeam
+        checkWinning(prevState);
+      }
+      else {
+        alert("Lol !! gemini coudnt think !! You play in behalf of gemini")
+      }
+      setGeminiThinking(false);
+      
+    })
+  }
+
+  if (selectingGemini) {
+    return (
+      <div className="flex justify-center items-center h-screen flex-col">
+        <h1 className="font-bold text-5xl text-green-300 mb-6">Game Mode</h1>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => {
+              setPlayGemini(false);
+              setSelectingGemini(false);
+            }}
+            className="bg-blue-300 py-2 px-6 text-2xl rounded-3xl text-black hover:bg-blue-400 transition-colors duration-200"
+          >
+            Play with friends
+          </button>
+          <button
+            onClick={() => {
+              setPlayGemini(true);
+              setSelectingGemini(false);
+            }}
+            className="bg-blue-300 py-2 px-6 text-2xl rounded-3xl text-black hover:bg-blue-400 transition-colors duration-200"
+          >
+            Gemini
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center items-center h-screen flex-col">
       <h1 className="font-bold text-5xl text-green-300">Tic-tac-toe</h1>
       <div className="grid grid-cols-3 mt-6 gap-4 w-[270px]">
         {grid.map((ele, index) => {
           return (
-            <div key={index}
+            <div
+              key={index}
               onClick={() => {
                 if (win || tie || selectingTeam) return;
 
@@ -108,7 +178,7 @@ export default function Home() {
                 setTurn(!turn);
               }}
               className={`p-4 text-red-800 font-bold text-5xl border rounded shadow-md flex items-center justify-center h-20 w-20 bg-white hover:bg-gray-100 transition-colors duration-200 ${
-                win || tie ? "cursor-default" : "cursor-pointer"
+                win || tie || geminiThinking ? "cursor-default" : "cursor-pointer"
               }`}
             >
               {ele}
@@ -117,27 +187,56 @@ export default function Home() {
         })}
       </div>
 
-        {selectingTeam? <div className="flex flex-col items-center space-y-3 text-xl mt-6 font-bold">
-        <h1 className="text-2xl">Choose your team</h1>
-        <div className="flex space-x-4">
-          <button onClick={()=>{
-            selectTeam("0")
-          }} className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black ">0</button>
-          <button onClick={()=>selectTeam("X")} className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black">X</button>
+      {selectingTeam ? (
+        <div className="flex flex-col items-center space-y-3 text-xl mt-6 font-bold">
+          <h1 className="text-2xl">Choose your team</h1>
+          <div className="flex space-x-4">
+            <button
+              onClick={() => {
+                selectTeam("0");
+                setGeminiTeam("X");
+              }}
+              className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black "
+            >
+              0
+            </button>
+            <button
+              onClick={() => {
+                selectTeam("X");
+                setGeminiTeam("0");
+              }}
+              className="bg-blue-300 py-2 px-4 text-2xl rounded-3xl text-black"
+            >
+              X
+            </button>
           </div>
-        </div>:<></>}
-       
-      {!selectingTeam?<h1 className="text-3xl font-bold mt-6 text-red-200">
-        {turn ? "0's" : "X's"} turn
-      </h1>:<></>}
-      
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {!selectingTeam ? (
+        <h1 className="text-3xl font-bold mt-6 text-red-200">
+          {turn ? "0's" : "X's"} turn
+        </h1>
+      ) : (
+        <></>
+      )}
+
+      {geminiThinking ? (
+        <div className="text-2xl font-bold mt-6 text-yellow-500">
+          Gemini is thinking...
+        </div>
+      ) : (
+        <></>
+      )}
+
       {win ? (
         <h1 className="text-3xl font-bold mt-2">{winner} is the Winner</h1>
       ) : (
         <></>
       )}
       {tie ? <h1 className="text-3xl font-bold mt-6">Its a tie</h1> : <></>}
-      
     </div>
   );
 }
