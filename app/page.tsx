@@ -6,6 +6,15 @@ export default function Home() {
   const [playGemini, setPlayGemini] = useState(false);
   const [geminiTeam, setGeminiTeam] = useState("");
 
+  const [apiKey, setApiKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're on the client-side
+    if (typeof window !== "undefined") {
+      const key = localStorage.getItem('gemini-api-key');
+      setApiKey(key);
+    }
+  }, []);
   
   const [selectingGemini, setSelectingGemini] = useState(true);
   const [grid, setGrid] = useState(Array(9).fill(""));
@@ -107,7 +116,7 @@ export default function Home() {
   function geminiAct(){
     if(playGemini == false) return;
     setGeminiThinking(true)
-    askGemini(JSON.stringify(grid),"Advanced",geminiTeam,localStorage.getItem('gemini-api-key') || "").then((res)=>{
+    askGemini(JSON.stringify(grid),"Advanced",geminiTeam,apiKey || "").then((res)=>{
       console.log(res)
       if(res.status == 200){
         const prevState = [...grid];
@@ -123,7 +132,7 @@ export default function Home() {
     })
   }
 
-  if(!localStorage.getItem('gemini-api-key')){
+  if(!apiKey){
       return (
         <div className="flex justify-center items-center h-screen flex-col">
           <h1 className="font-bold text-5xl text-green-300 mb-6">Enter Gemini API Key</h1>
@@ -135,9 +144,9 @@ export default function Home() {
           />
           <button
             onClick={() => {
-              const apiKey = (document.getElementById("gemini-api-key-input") as HTMLInputElement).value;
-              if (apiKey) {
-                localStorage.setItem('gemini-api-key', apiKey);
+              const TempapiKey = (document.getElementById("gemini-api-key-input") as HTMLInputElement).value;
+              if (TempapiKey) {
+                localStorage.setItem('gemini-api-key', TempapiKey);
                 window.location.reload();
               } else {
                 alert("Please enter a valid API key");
