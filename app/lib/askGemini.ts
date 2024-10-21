@@ -22,6 +22,7 @@ export const askGemini = async (grid:string,level:string,team:string) => {
     }
    }
    catch(e){
+    console.log(e)
     return {
         status : 500,
         res: -1
