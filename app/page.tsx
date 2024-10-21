@@ -122,7 +122,8 @@ export default function Home() {
         const prevState = [...grid];
         prevState[res.res] = geminiTeam
         setGrid(prevState);
-        checkWinning(prevState);
+        const won = checkWinning(prevState);
+        if(!won) checkTie(prevState);
       }
       else {
         alert("Lol !! gemini coudnt think !! You play in behalf of gemini")
