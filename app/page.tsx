@@ -107,7 +107,7 @@ export default function Home() {
   function geminiAct(){
     if(playGemini == false) return;
     setGeminiThinking(true)
-    askGemini(JSON.stringify(grid),"Advanced",geminiTeam).then((res)=>{
+    askGemini(JSON.stringify(grid),"Advanced",geminiTeam,localStorage.getItem('gemini-api-key') || "").then((res)=>{
       console.log(res)
       if(res.status == 200){
         const prevState = [...grid];
@@ -121,6 +121,34 @@ export default function Home() {
       setGeminiThinking(false);
       setTurn(t => !t)
     })
+  }
+
+  if(!localStorage.getItem('gemini-api-key')){
+      return (
+        <div className="flex justify-center items-center h-screen flex-col">
+          <h1 className="font-bold text-5xl text-green-300 mb-6">Enter Gemini API Key</h1>
+          <input
+            type="text"
+            placeholder="Gemini API Key"
+            className="mb-4 p-2 border rounded w-80 text-center text-black"
+            id="gemini-api-key-input"
+          />
+          <button
+            onClick={() => {
+              const apiKey = (document.getElementById("gemini-api-key-input") as HTMLInputElement).value;
+              if (apiKey) {
+                localStorage.setItem('gemini-api-key', apiKey);
+                window.location.reload();
+              } else {
+                alert("Please enter a valid API key");
+              }
+            }}
+            className="bg-blue-300 py-2 px-6 text-2xl rounded-3xl text-black hover:bg-blue-400 transition-colors duration-200"
+          >
+            Submit
+          </button>
+        </div>
+      )
   }
 
   if (selectingGemini) {
