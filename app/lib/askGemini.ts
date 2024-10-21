@@ -1,31 +1,29 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
-const genAI = new GoogleGenerativeAI("API_KEY");
+"use server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const API_KEY = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(API_KEY as string);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-export const askGemini = async (grid:string,level:string,team:string) => {
+export const askGemini = async (grid: string, level: string, team: string) => {
+  console.log(API_KEY);
+  const prompt = `${grid} 
+You are ${team} in a 3x3 Tic-Tac-Toe game. Choose a random empty space ("") from the grid at ${level} level. 
+Do not select any space where "X" is present. Give only the chosen index.
+Don't give any extra explanations or content`;
+  
+  const result = await model.generateContent([prompt]);
 
-  const prompt = `${grid}
-    This is a 3x3 , 3 rows is in one row -> tic-tac-toe board. You are ${team}. 
-    Choose an empty space from the grid at ${level} level, 
-    meaning you can select any available space randomly. Available space is empty string. 
-    Just give the index you select with no content and explanation.
-   `;
-   const result = await model.generateContent([prompt]);
-   
-
-   try {
-    const res = result.response.text()
-
+  try {
+    const res = result.response.text();
     return {
-        status: 200,
-        res:Number.parseInt(res)
-    }
-   }
-   catch(e){
-    console.log(e)
+      status: 200,
+      res: Number.parseInt(res),
+    };
+  } catch (e) {
+    console.log(e);
     return {
-        status : 500,
-        res: -1
-    }
-   }
+      status: 500,
+      res: -1,
+    };
+  }
 };

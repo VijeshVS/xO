@@ -9,7 +9,6 @@ export default function Home() {
   
   const [selectingGemini, setSelectingGemini] = useState(true);
   const [grid, setGrid] = useState(Array(9).fill(""));
-  // Turn true -> O else X
   const [turn, setTurn] = useState(true);
   const [win, setWin] = useState(false);
   const [winner, setWinner] = useState("");
@@ -21,12 +20,15 @@ export default function Home() {
   
 
   useEffect(()=>{
-    if(turn == true && geminiTeam == "0"){
-      geminiAct();
+    if(!win){
+      if(turn == true && geminiTeam == "0"){
+        geminiAct();
+      }
+      else if(turn == false && geminiTeam == "X"){
+        geminiAct();
+      }
     }
-    else if(turn == false && geminiTeam == "X"){
-      geminiAct();
-    }
+    
   },[turn])
 
   function selectTeam(team: string) {
@@ -103,18 +105,21 @@ export default function Home() {
   }
 
   function geminiAct(){
+    if(playGemini == false) return;
     setGeminiThinking(true)
     askGemini(JSON.stringify(grid),"Advanced",geminiTeam).then((res)=>{
+      console.log(res)
       if(res.status == 200){
         const prevState = [...grid];
         prevState[res.res] = geminiTeam
+        setGrid(prevState);
         checkWinning(prevState);
       }
       else {
         alert("Lol !! gemini coudnt think !! You play in behalf of gemini")
       }
       setGeminiThinking(false);
-      
+      setTurn(t => !t)
     })
   }
 
@@ -155,7 +160,7 @@ export default function Home() {
             <div
               key={index}
               onClick={() => {
-                if (win || tie || selectingTeam) return;
+                if (win || tie || selectingTeam || geminiThinking) return;
 
                 const prevState = [...grid];
                 if (prevState[index] != "") return;
