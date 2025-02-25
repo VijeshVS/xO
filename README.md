@@ -1,3 +1,3 @@
-# Tic Tac Toe
+# xO
 
-Built this using react under an hour
+WORK IN PROGRESS
