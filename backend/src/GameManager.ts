@@ -33,6 +33,12 @@ class GameManager {
     } else {
       this.pendingUser = user;
 
+      user.on('disconnect', () => {
+        if (this.pendingUser === user) {
+          this.pendingUser = null;
+        }
+      });
+
       return {
         status: "pending",
       };
