@@ -1,5 +1,7 @@
 # Tic Tac Toe (X0)
 
+![image](https://github.com/user-attachments/assets/3f098a95-6d74-4c0a-9e5e-6dee9e40bf0a)
+
 ## Overview
 Tic Tac Toe (X0) is a real-time multiplayer game with a WebSocket backend and a React frontend. The application is deployed at [xo.vijesh.tech](https://xo.vijesh.tech).
 
