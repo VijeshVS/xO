@@ -14,15 +14,7 @@ wss.on("connection", function connection(ws) {
     if (message.type == Messages.INIT_GAME) {
       const { status, game } = gameManager.createGame(ws);
 
-      if (game == undefined) {
-        ws.send(
-          JSON.stringify({
-            type: Messages.INIT_GAME,
-            status: "error",
-            message: "Some error occured",
-          })
-        );
-      } else if (status == "pending") {
+      if (status == "pending") {
         ws.send(
           JSON.stringify({
             type: Messages.INIT_GAME,
@@ -30,11 +22,24 @@ wss.on("connection", function connection(ws) {
           })
         );
       } else if (status == "ready") {
+
+        if(game == undefined){
+          ws.send(
+            JSON.stringify({
+              type: Messages.INIT_GAME,
+              status: "error",
+              message: "Game not found",
+            })
+          );
+          return;
+        }
+
         game.player1.send(
           JSON.stringify({
             type: Messages.INIT_GAME,
             status: "ready",
             player: 1,
+            gameId: game.id,
           })
         );
 
@@ -43,10 +48,26 @@ wss.on("connection", function connection(ws) {
             type: Messages.INIT_GAME,
             status: "ready",
             player: 2,
+            gameId: game.id,
           })
         );
       }
     } else if (message.type == Messages.MOVE) {
+      const { gameId, row, col } = message;
+      const game = gameManager.getGame(gameId);
+
+      if (game == undefined) {
+        ws.send(
+          JSON.stringify({
+            type: Messages.MOVE,
+            status: "error",
+            message: "Game not found",
+          })
+        );
+        return;
+      }
+
+      gameManager.makeMove(gameId, ws, row, col);
     }
   });
 
