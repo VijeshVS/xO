@@ -33,8 +33,8 @@ class GameManager {
     } else {
       this.pendingUser = user;
 
-      user.on('disconnect', () => {
-        if (this.pendingUser === user) {
+      user.on("close", () => {
+        if(user == this.pendingUser){
           this.pendingUser = null;
         }
       });
