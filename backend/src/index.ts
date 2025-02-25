@@ -60,7 +60,7 @@ wss.on("connection", function connection(ws) {
           JSON.stringify({
             type: Messages.MOVE,
             status: "error",
-            message: "Game not found",
+            reason: "Game not found",
           })
         );
         return;

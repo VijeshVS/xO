@@ -37,6 +37,30 @@ class GameManager {
         if(user == this.pendingUser){
           this.pendingUser = null;
         }
+        else {
+          const game = this.games.find((game) => game.player1 === user || game.player2 === user);
+          if(game){
+            this.games.splice(this.games.indexOf(game), 1);
+            if(game.player1 == user){
+              game.player1.send(
+                JSON.stringify({
+                  status: "GAME_OVER",
+                  winner: 2,
+                  abort: true
+                })
+              );
+            }
+            if(game.player2 == user){
+              game.player2.send(
+                JSON.stringify({
+                  status: "GAME_OVER",
+                  winner: 1,
+                  abort: true
+                })
+              );
+            }
+          }
+        }
       });
 
       return {
@@ -92,6 +116,7 @@ class GameManager {
       player.send(
         JSON.stringify({
           status: "error",
+          reason: "Game not found"
         })
       );
       return;
@@ -101,6 +126,7 @@ class GameManager {
       player.send(
         JSON.stringify({
           status: "error",
+          reason: "Opponent's turn"
         })
       );
       return;
@@ -110,6 +136,7 @@ class GameManager {
       player.send(
         JSON.stringify({
           status: "error",
+          reason: "Opponent's turn"
         })
       );
       return;
@@ -119,6 +146,7 @@ class GameManager {
       player.send(
         JSON.stringify({
           status: "error",
+          reason: "Cell already taken"
         })
       );
       return;
