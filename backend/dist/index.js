@@ -57,5 +57,4 @@ wss.on("connection", function connection(ws) {
             gameManager.makeMove(gameId, ws, row, col);
         }
     });
-    ws.send("something");
 });

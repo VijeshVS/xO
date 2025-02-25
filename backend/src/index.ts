@@ -22,7 +22,6 @@ wss.on("connection", function connection(ws) {
           })
         );
       } else if (status == "ready") {
-
         if(game == undefined){
           ws.send(
             JSON.stringify({
@@ -70,6 +69,4 @@ wss.on("connection", function connection(ws) {
       gameManager.makeMove(gameId, ws, row, col);
     }
   });
-
-  ws.send("something");
 });

@@ -97,6 +97,14 @@ class GameManager {
         // row,col|X
         const move = `${row},${col}|${game.board[row][col]}`;
         game.moves.push(move);
+        game.player1.send(JSON.stringify({
+            status: "MOVE",
+            move,
+        }));
+        game.player2.send(JSON.stringify({
+            status: "MOVE",
+            move,
+        }));
         // check if game is over
         if (this.checkWinner(game.board)) {
             game.player1.send(JSON.stringify({
@@ -120,17 +128,6 @@ class GameManager {
                 winner: 0,
             }));
             this.games.splice(this.games.indexOf(game), 1);
-        }
-        else {
-            // Sending moves
-            game.player1.send(JSON.stringify({
-                status: "MOVE",
-                move,
-            }));
-            game.player2.send(JSON.stringify({
-                status: "MOVE",
-                move,
-            }));
         }
     }
 }
