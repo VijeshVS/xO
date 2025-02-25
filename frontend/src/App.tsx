@@ -11,7 +11,7 @@ function App() {
   const [gameStatus, setGameStatus] = useState<'idle' | 'pending' | 'ready' | 'over'>('idle');
   const [winner, setWinner] = useState<number | null>(null);
   const [board, setBoard] = useState<string[][]>(Array(3).fill(null).map(() => Array(3).fill('')));
-  const { socket, connected, connect } = useWebSocket('wss://xo-backend-igyn.onrender.com');
+  const { socket, connected, connect, connecting } = useWebSocket('wss://xo-backend-igyn.onrender.com');
 
   const handlePlay = useCallback(() => {
     if (socket) {
@@ -96,7 +96,7 @@ function App() {
               onClick={connect}
               className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
             >
-              Connect to Server
+                {connecting ? <div className="flex items-center justify-center"><Loader2 className="animate-spin mr-2" />Connecting...</div> : 'Connect to Server'}
             </button>
           </div>
         ) : gameStatus === 'idle' ? (
