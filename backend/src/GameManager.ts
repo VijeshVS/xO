@@ -1,15 +1,16 @@
 import { Game } from './types/main';
+import { WebSocket as WsWebSocket } from 'ws';
 
 class GameManager {
     private games: Game[];
-    private pendingUser: WebSocket | null;
+    private pendingUser: WsWebSocket | null;
         
     constructor() {
         this.games = [];
         this.pendingUser = null;
     }
 
-    createGame(user: WebSocket){
+    createGame(user: WsWebSocket){
         if(this.pendingUser){
             const game: Game = {
                 id: Math.random().toString(36).substring(7),
@@ -43,7 +44,7 @@ class GameManager {
         return this.games.find(game => game.id === id);
     }
 
-    makeMove(id: string, player: WebSocket, row: number, col: number) {
+    makeMove(id: string, player: WsWebSocket, row: number, col: number) {
         const game = this.getGame(id);
         if(!game) return;
 
