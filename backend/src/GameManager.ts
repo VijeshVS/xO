@@ -42,7 +42,7 @@ class GameManager {
           if(game){
             this.games.splice(this.games.indexOf(game), 1);
             if(game.player1 == user){
-              game.player1.send(
+              game.player2.send(
                 JSON.stringify({
                   status: "GAME_OVER",
                   winner: 2,
@@ -51,7 +51,7 @@ class GameManager {
               );
             }
             if(game.player2 == user){
-              game.player2.send(
+              game.player1.send(
                 JSON.stringify({
                   status: "GAME_OVER",
                   winner: 1,
