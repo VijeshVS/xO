@@ -11,7 +11,7 @@ function App() {
   const [gameStatus, setGameStatus] = useState<'idle' | 'pending' | 'ready' | 'over'>('idle');
   const [winner, setWinner] = useState<number | null>(null);
   const [board, setBoard] = useState<string[][]>(Array(3).fill(null).map(() => Array(3).fill('')));
-  const { socket, connected, connect } = useWebSocket('ws://localhost:8080');
+  const { socket, connected, connect } = useWebSocket('wss://xo-backend-igyn.onrender.com');
 
   const handlePlay = useCallback(() => {
     if (socket) {
