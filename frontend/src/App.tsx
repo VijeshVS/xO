@@ -163,7 +163,7 @@ function App() {
                 )}
               </p>
             </div>
-            <GameBoard board={board} onMove={handleMove} />
+            <GameBoard board={board} winner={winner} onMove={handleMove} />
             {gameStatus === "over" && (
               <div className="mt-4 text-center">
                 <p className="text-xl font-bold">
