@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Circle } from 'lucide-react';
 
 interface GameBoardProps {
