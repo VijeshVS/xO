@@ -4,6 +4,7 @@ import GameManager from "./GameManager";
 
 const wss = new WebSocketServer({ port: 8080 });
 const gameManager = new GameManager();
+const getRandomOneOrTwo = () => Math.random() < 0.5 ? 1 : 2;
 
 wss.on("connection", function connection(ws) {
   ws.on("error", console.error);
@@ -32,12 +33,14 @@ wss.on("connection", function connection(ws) {
           );
           return;
         }
+        
+        let player = getRandomOneOrTwo();
 
         game.player1.send(
           JSON.stringify({
             type: Messages.INIT_GAME,
             status: "ready",
-            player: 1,
+            player: player,
             gameId: game.id,
           })
         );
@@ -46,7 +49,7 @@ wss.on("connection", function connection(ws) {
           JSON.stringify({
             type: Messages.INIT_GAME,
             status: "ready",
-            player: 2,
+            player: player == 1 ? 2 : 1,
             gameId: game.id,
           })
         );
